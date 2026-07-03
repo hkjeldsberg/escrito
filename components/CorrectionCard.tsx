@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Corrections } from '@/lib/types'
 
 interface Props {
@@ -8,52 +7,45 @@ interface Props {
 }
 
 export default function CorrectionCard({ corrections }: Props) {
-  const [open, setOpen] = useState(false)
-
   if (!corrections.hasErrors && corrections.alternatives.length === 0) return null
 
   return (
-    <div className="mb-2 max-w-[85%]">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 text-xs text-amber-400 hover:text-amber-300 transition-colors"
-      >
-        <span className={`transition-transform ${open ? 'rotate-90' : ''}`}>▶</span>
-        {corrections.hasErrors
-          ? `${corrections.errors.length} correction${corrections.errors.length !== 1 ? 's' : ''}`
-          : 'Tip'}
-        {corrections.alternatives.length > 0 && !corrections.hasErrors ? '' : ''}
-      </button>
+    <div className="mb-3 max-w-[85%] bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+      <div className="flex items-center gap-2 flex-wrap mb-2">
+        <span className="bg-purple-800 text-white text-[10px] font-bold tracking-widest uppercase rounded px-2 py-0.5">
+          Feedback
+        </span>
+        {corrections.errors.map((err, i) => (
+          <span key={i} className="bg-pink-500/10 text-pink-500 text-xs font-medium rounded-full px-3 py-0.5 border border-pink-500/20">
+            {err.original} → {err.correction}
+          </span>
+        ))}
+        {corrections.errors[0] && (
+          <span className="text-xs text-purple-800/70">
+            — {corrections.errors[0].explanation}
+          </span>
+        )}
+      </div>
 
-      {open && (
-        <div className="mt-2 border border-amber-900/50 bg-amber-950/20 rounded-lg p-3 text-xs space-y-3">
-          {corrections.errors.map((err, i) => (
-            <div key={i} className="space-y-1">
-              <div className="flex items-start gap-2">
-                <span className="text-red-400 shrink-0">✗</span>
-                <span className="text-zinc-400 line-through">{err.original}</span>
-              </div>
-              <div className="flex items-start gap-2 pl-4">
-                <span className="text-green-400 shrink-0">✓</span>
-                <span className="text-zinc-200">{err.correction}</span>
-              </div>
-              <p className="pl-4 text-zinc-500 leading-relaxed">{err.explanation}</p>
-            </div>
-          ))}
+      {corrections.errors.length > 1 && corrections.errors.slice(1).map((err, i) => (
+        <div key={i} className="flex items-center gap-2 flex-wrap mt-1">
+          <span className="bg-pink-500/10 text-pink-500 text-xs font-medium rounded-full px-3 py-0.5 border border-pink-500/20">
+            {err.original} → {err.correction}
+          </span>
+          <span className="text-xs text-purple-800/70">— {err.explanation}</span>
+        </div>
+      ))}
 
-          {corrections.alternatives.length > 0 && (
-            <div>
-              <p className="text-zinc-500 mb-1">Alternative phrasing:</p>
-              <ul className="space-y-1">
-                {corrections.alternatives.map((alt, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-blue-400 shrink-0">→</span>
-                    <span className="text-zinc-300">{alt}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+      {corrections.alternatives.length > 0 && (
+        <div className="mt-2 pt-2 border-t border-purple-100">
+          <p className="text-[10px] font-semibold text-purple-400 uppercase tracking-wider mb-1">Also natural</p>
+          <div className="flex flex-wrap gap-1.5">
+            {corrections.alternatives.map((alt, i) => (
+              <span key={i} className="text-xs text-purple-700 bg-purple-50 rounded-full px-2.5 py-0.5">
+                {alt}
+              </span>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -18,3 +18,16 @@ CREATE TABLE escrito.messages (
 );
 
 CREATE INDEX ON escrito.messages(conversation_id);
+
+-- Grant schema + table access to anon and authenticated roles
+GRANT USAGE ON SCHEMA escrito TO anon, authenticated;
+GRANT ALL ON escrito.conversations TO anon, authenticated;
+GRANT ALL ON escrito.messages TO anon, authenticated;
+
+-- Enable RLS (required to add policies)
+ALTER TABLE escrito.conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE escrito.messages ENABLE ROW LEVEL SECURITY;
+
+-- Permissive policies — app is password-protected at the proxy layer
+CREATE POLICY "allow_all_conversations" ON escrito.conversations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "allow_all_messages" ON escrito.messages FOR ALL USING (true) WITH CHECK (true);

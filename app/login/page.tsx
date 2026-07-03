@@ -30,26 +30,31 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+    <div className="min-h-screen bg-purple-800 flex items-center justify-center">
+      {/* Top accent bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-pink-500" />
+
       <div className="w-full max-w-sm px-8">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">escrito</h1>
-          <p className="mt-2 text-sm text-zinc-500">Latin American Spanish tutor</p>
+          <h1 className="text-3xl font-bold text-white">
+            Where <span className="font-display italic text-pink-500">Spanish</span> and practice meet
+          </h1>
+          <p className="mt-3 text-sm text-white/40">Enter your password to continue</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 text-sm"
+            className="w-full bg-purple-700/40 border border-purple-600/30 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-pink-500/60 text-sm"
             autoFocus
           />
-          {error && <p className="text-red-400 text-xs">{error}</p>}
+          {error && <p className="text-pink-400 text-xs">{error}</p>}
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 text-zinc-100 rounded-lg px-4 py-3 text-sm font-medium transition-colors"
+            className="w-full bg-pink-500 hover:bg-pink-600 disabled:opacity-40 text-white rounded-xl px-4 py-3 text-sm font-semibold transition-colors"
           >
             {loading ? 'Checking...' : 'Enter'}
           </button>

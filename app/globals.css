@@ -1,9 +1,37 @@
 @import "tailwindcss";
 
+@theme {
+  --color-purple-950: #0f0620;
+  --color-purple-900: #150828;
+  --color-purple-800: #1c0d3a;
+  --color-purple-700: #2a1550;
+  --color-purple-600: #3d2268;
+  --color-purple-500: #5a3490;
+
+  --color-pink-400: #f580c8;
+  --color-pink-500: #f020a0;
+  --color-pink-600: #c0177e;
+
+  --font-sans: var(--font-geist);
+  --font-display: var(--font-playfair);
+}
+
 html, body {
   height: 100%;
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Smooth scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #3d2268;
+  border-radius: 2px;
 }

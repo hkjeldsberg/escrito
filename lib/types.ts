@@ -16,6 +16,7 @@ export interface Corrections {
   hasErrors: boolean
   errors: CorrectionError[]
   alternatives: string[]
+  translation?: string
 }
 
 export interface Message {

@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     fetch('/api/conversations')
       .then((r) => r.json())
-      .then(setConversations)
+      .then((data) => setConversations(Array.isArray(data) ? data : []))
       .catch(console.error)
   }, [])
 
@@ -25,7 +25,7 @@ export default function Home() {
   const loadMessages = useCallback(async (id: string) => {
     const res = await fetch(`/api/conversations/${id}`)
     const data = await res.json()
-    setMessages(data)
+    setMessages(Array.isArray(data) ? data : [])
   }, [])
 
   useEffect(() => {
@@ -110,12 +110,12 @@ export default function Home() {
         {activeId ? (
           <>
             {/* Header */}
-            <div className="shrink-0 border-b border-zinc-800 px-6 py-3">
-              <h1 className="text-sm font-medium text-zinc-300 truncate">
-                {activeConv?.title ?? 'Conversation'}
+            <div className="shrink-0 px-6 pt-6 pb-2">
+              <h1 className="text-2xl font-bold text-white">
+                Where <span className="font-display italic text-pink-500">Spanish</span> and practice meet
               </h1>
               {activeConv?.scenario && (
-                <p className="text-xs text-zinc-600 mt-0.5 truncate">{activeConv.scenario}</p>
+                <p className="text-sm text-white/50 mt-1">{activeConv.scenario}</p>
               )}
             </div>
 
