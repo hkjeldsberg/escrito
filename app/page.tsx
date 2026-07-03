@@ -1,65 +1,131 @@
-import Image from "next/image";
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import { Conversation, Message, Scenario } from '@/lib/types'
+import Sidebar from '@/components/Sidebar'
+import ChatWindow from '@/components/ChatWindow'
+import MessageInput from '@/components/MessageInput'
+import ScenarioSelector from '@/components/ScenarioSelector'
 
 export default function Home() {
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [loading, setLoading] = useState(false)
+
+  // Load conversations list
+  useEffect(() => {
+    fetch('/api/conversations')
+      .then((r) => r.json())
+      .then(setConversations)
+      .catch(console.error)
+  }, [])
+
+  // Load messages when active conversation changes
+  const loadMessages = useCallback(async (id: string) => {
+    const res = await fetch(`/api/conversations/${id}`)
+    const data = await res.json()
+    setMessages(data)
+  }, [])
+
+  useEffect(() => {
+    if (activeId) loadMessages(activeId)
+    else setMessages([])
+  }, [activeId, loadMessages])
+
+  async function handleSelectScenario(scenario: Scenario) {
+    const res = await fetch('/api/conversations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: scenario.title, scenario: scenario.description }),
+    })
+    const conv: Conversation = await res.json()
+    setConversations((prev) => [conv, ...prev])
+    setActiveId(conv.id)
+  }
+
+  async function handleSend(text: string) {
+    if (!activeId || loading) return
+    setLoading(true)
+
+    // Optimistic user message
+    const tempMsg: Message = {
+      id: `temp-${Date.now()}`,
+      conversation_id: activeId,
+      role: 'user',
+      content: text,
+      corrections: null,
+      created_at: new Date().toISOString(),
+    }
+    setMessages((prev) => [...prev, tempMsg])
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId: activeId, userMessage: text }),
+      })
+      const assistantMsg: Message = await res.json()
+
+      // Reload messages to get saved user msg id too
+      await loadMessages(activeId)
+
+      // Update conversation updated_at in sidebar
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === activeId ? { ...c, updated_at: new Date().toISOString() } : c
+        )
+      )
+    } catch (err) {
+      console.error(err)
+      setMessages((prev) => prev.filter((m) => m.id !== tempMsg.id))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleDelete(id: string) {
+    await fetch(`/api/conversations/${id}`, { method: 'DELETE' })
+    setConversations((prev) => prev.filter((c) => c.id !== id))
+    if (activeId === id) setActiveId(null)
+  }
+
+  function handleNew() {
+    setActiveId(null)
+  }
+
+  const activeConv = conversations.find((c) => c.id === activeId)
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="flex h-full">
+      <Sidebar
+        conversations={conversations}
+        activeId={activeId}
+        onSelect={setActiveId}
+        onNew={handleNew}
+        onDelete={handleDelete}
+      />
+
+      <div className="flex-1 flex flex-col min-h-0">
+        {activeId ? (
+          <>
+            {/* Header */}
+            <div className="shrink-0 border-b border-zinc-800 px-6 py-3">
+              <h1 className="text-sm font-medium text-zinc-300 truncate">
+                {activeConv?.title ?? 'Conversation'}
+              </h1>
+              {activeConv?.scenario && (
+                <p className="text-xs text-zinc-600 mt-0.5 truncate">{activeConv.scenario}</p>
+              )}
+            </div>
+
+            <ChatWindow messages={messages} loading={loading} />
+            <MessageInput onSend={handleSend} disabled={loading} />
+          </>
+        ) : (
+          <ScenarioSelector onSelect={handleSelectScenario} />
+        )}
+      </div>
     </div>
-  );
+  )
 }
