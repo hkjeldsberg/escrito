@@ -38,7 +38,7 @@ export default function MessageInput({ onSend, disabled }: Props) {
   }
 
   return (
-    <div className="px-6 py-4">
+    <div className="px-4 py-3 sm:px-6 sm:py-4">
       <div className="flex items-end gap-3 bg-purple-700/40 border border-purple-600/30 rounded-xl px-4 py-3">
         <textarea
           ref={textareaRef}
@@ -48,7 +48,7 @@ export default function MessageInput({ onSend, disabled }: Props) {
           onKeyDown={handleKeyDown}
           placeholder="Start typing for free..."
           disabled={disabled}
-          className="flex-1 bg-transparent resize-none text-sm text-white placeholder-white/30 focus:outline-none leading-relaxed py-0.5 max-h-40"
+          className="flex-1 bg-transparent resize-none text-base sm:text-sm text-white placeholder-white/30 focus:outline-none leading-relaxed py-0.5 max-h-40"
         />
         <button
           onClick={submit}

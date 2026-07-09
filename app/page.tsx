@@ -12,6 +12,7 @@ export default function Home() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Load conversations list
   useEffect(() => {
@@ -104,14 +105,30 @@ export default function Home() {
         onSelect={setActiveId}
         onNew={handleNew}
         onDelete={handleDelete}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
 
       <div className="flex-1 flex flex-col min-h-0">
+        {/* Mobile top bar */}
+        <div className="md:hidden shrink-0 flex items-center gap-3 h-14 px-4 border-b border-purple-700/40">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open menu"
+            className="w-9 h-9 -ml-1 flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-purple-700/40 transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <span className="font-display italic text-lg text-pink-500">Escrito</span>
+        </div>
+
         {activeId ? (
           <>
             {/* Header */}
-            <div className="shrink-0 px-6 pt-6 pb-2">
-              <h1 className="text-2xl font-bold text-white">
+            <div className="shrink-0 px-4 pt-4 pb-2 sm:px-6 sm:pt-6">
+              <h1 className="text-xl font-bold text-white sm:text-2xl">
                 Where <span className="font-display italic text-pink-500">Spanish</span> and practice meet
               </h1>
               {activeConv?.scenario && (

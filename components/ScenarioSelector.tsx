@@ -26,22 +26,22 @@ export default function ScenarioSelector({ onSelect }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full px-8 max-w-2xl mx-auto w-full">
-      <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold text-white leading-tight">
+    <div className="flex flex-col items-center justify-center h-full px-5 py-8 sm:px-8 max-w-2xl mx-auto w-full">
+      <div className="mb-8 sm:mb-10 text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
           Where <span className="font-display italic text-pink-500">Spanish</span> and practice meet
         </h2>
         <p className="mt-2 text-sm text-white/50">Choose a scenario to get started</p>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-3 w-full mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mb-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="h-20 rounded-xl bg-purple-700/30 animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 w-full mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mb-6">
           {scenarios.map((s, i) => (
             <button
               key={i}
@@ -61,7 +61,7 @@ export default function ScenarioSelector({ onSelect }: Props) {
           placeholder="Or describe your own topic..."
           value={custom}
           onChange={(e) => setCustom(e.target.value)}
-          className="flex-1 bg-purple-700/30 border border-purple-600/30 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-pink-500/50"
+          className="flex-1 min-w-0 bg-purple-700/30 border border-purple-600/30 rounded-xl px-4 py-2.5 text-base sm:text-sm text-white placeholder-white/30 focus:outline-none focus:border-pink-500/50"
         />
         <button
           type="submit"

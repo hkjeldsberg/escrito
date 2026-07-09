@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { Playfair_Display } from "next/font/google";
 import "./globals.css";
@@ -9,6 +9,13 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   title: "Escrito",
   description: "Latin American Spanish conversation tutor",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Keep pinch-zoom enabled for accessibility; interactive UI covers the safe area.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

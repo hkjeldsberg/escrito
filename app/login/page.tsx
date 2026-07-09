@@ -47,7 +47,7 @@ export default function LoginPage() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-purple-700/40 border border-purple-600/30 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-pink-500/60 text-sm"
+            className="w-full bg-purple-700/40 border border-purple-600/30 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-pink-500/60 text-base sm:text-sm"
             autoFocus
           />
           {error && <p className="text-pink-400 text-xs">{error}</p>}
